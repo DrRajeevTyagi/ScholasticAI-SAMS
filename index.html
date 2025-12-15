@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ScholasticAI - Decoding Student Potential through Holistic AI Analysis." />
+    <title>ScholasticAI - Holistic School Intelligence</title>
+    <!-- Tailwind CSS (CDN) - Kept for simplicity in the 'Download & Run' version -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // 1. Shim process to prevent crashes if libraries try to access process.env
+      window.process = { 
+        env: { 
+            NODE_ENV: 'development',
+            // NOTE: In a real local setup, you will use a .env file for the API_KEY.
+            // This placeholder prevents immediate crashes.
+            API_KEY: '' 
+        } 
+      };
+      
+      // 2. Tailwind Config
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              school: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                800: '#075985',
+                900: '#0c4a6e',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 text-gray-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
