@@ -36,6 +36,21 @@ const EVENT_CATEGORIES: Record<SchoolEvent['category'], { icon: any, color: stri
         icon: UsersIcon,
         color: 'text-green-600 bg-green-50',
         types: ['Student Council Election', 'Cleanliness Drive', 'Charity Fair', 'Plantation Drive', 'Health Checkup Camp']
+    },
+    'Academic': {
+        icon: Award,
+        color: 'text-indigo-600 bg-indigo-50',
+        types: ['Quiz Competition', 'Math Olympiad', 'Spell Bee', 'General Knowledge Contest', 'Academic Excellence Awards']
+    },
+    'Technology': {
+        icon: Sparkles,
+        color: 'text-cyan-600 bg-cyan-50',
+        types: ['Coding Hackathon', 'Robotics Workshop', 'App Development', 'AI/ML Workshop', 'Tech Fest']
+    },
+    'Social Service': {
+        icon: UsersIcon,
+        color: 'text-emerald-600 bg-emerald-50',
+        types: ['Community Service', 'Cleanliness Drive', 'Awareness Campaign', 'Charity Work', 'Social Outreach']
     }
 };
 
