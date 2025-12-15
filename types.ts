@@ -19,7 +19,7 @@ export interface CoCurricularActivity {
   id: string;
   name: string; // e.g., "Inter-school Debate", "Football Zonal"
   date: string;
-  category: 'Sports' | 'Visual Arts' | 'Performing Arts' | 'Scientific' | 'Literary' | 'Leadership/Community';
+  category: 'Sports' | 'Visual Arts' | 'Performing Arts' | 'Scientific' | 'Literary' | 'Leadership/Community' | 'Academic' | 'Technology' | 'Social Service';
   type?: 'Intra-School' | 'Inter-School'; // Added Scope
   hoursSpent: number; // To calculate time impact
   achievement?: string; // "Winner", "Participant", "Volunteer"
