@@ -25,7 +25,7 @@ const getApiKey = (): string => {
 
 // Helper to check if API key is valid
 const isApiKeyValid = (apiKey: string): boolean => {
-  return apiKey && apiKey.trim() !== '' && apiKey !== 'missing_api_key' && apiKey.length > 10;
+  return !!(apiKey && apiKey.trim() !== '' && apiKey !== 'missing_api_key' && apiKey.length > 10);
 };
 
 // Helper to safely get the client only when needed using Dynamic Import
