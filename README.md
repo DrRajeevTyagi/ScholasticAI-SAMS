@@ -19,8 +19,8 @@ A modern, AI-powered School Management System designed for CBSE Senior Secondary
 
 ```bash
 # Clone the repository
-git clone https://github.com/DrRajeevTyagi/SAMS-15Dec25.git
-cd SAMS_15Dec25
+git clone https://github.com/DrRajeevTyagi/ScholasticAI-SAMS.git
+cd ScholasticAI-SAMS
 
 # Install dependencies
 npm install
