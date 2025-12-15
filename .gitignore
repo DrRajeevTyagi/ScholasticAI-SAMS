@@ -47,3 +47,8 @@ coverage
 # Diagnostic/test files
 test-api-connection.html
 check-env.js
+
+# Documentation folders (not for GitHub)
+faltu documentation/
+My Docs/
+our docs/
