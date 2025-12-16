@@ -219,7 +219,7 @@ const EventDetails: React.FC = () => {
                                 className="mt-2 bg-school-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-school-700 flex items-center gap-2 ml-auto"
                             >
                                 <UserPlus size={16} />
-                                Apply as Volunteer
+                                Apply to be part of this event
                             </button>
                         )}
                         {currentUser?.role === 'Student' && event.studentRoles.some(r => r.studentId === currentUser.id && r.status === 'volunteered') && (
@@ -227,7 +227,7 @@ const EventDetails: React.FC = () => {
                                 ⏳ Application Pending
                             </div>
                         )}
-                        {currentUser?.role === 'Student' && event.studentRoles.some(r => r.studentId === currentUser.id && r.status === 'participant') && (
+                        {currentUser?.role === 'Student' && event.studentRoles.some(r => r.studentId === currentUser.id && (r.status === 'participant' || r.status === 'volunteered')) && event.studentRoles.find(r => r.studentId === currentUser.id)?.status === 'participant' && (
                             <div className="mt-2 bg-green-50 border border-green-200 text-green-800 px-3 py-2 rounded-lg text-xs font-medium">
                                 ✓ You're Participating
                             </div>
