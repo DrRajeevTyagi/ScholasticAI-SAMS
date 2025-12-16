@@ -39,6 +39,8 @@ const EventDetails: React.FC = () => {
 
     const handleSaveToContext = () => {
         if (event) {
+            console.log('💾 SAVING EVENT - Students:', event.studentRoles.length, 'Staff:', event.staffRoles.length);
+            console.log('💾 Student roles:', event.studentRoles.map(r => ({ name: r.studentName, id: r.studentId })));
             updateEvent(event);
             setIsSaved(true);
         }
@@ -75,6 +77,7 @@ const EventDetails: React.FC = () => {
 
         // Find the actual student object to get real studentId
         const selectedStudent = students.find(s => s.name === newStudent.name);
+        console.log('🔍 ADD STUDENT - Looking for:', newStudent.name, 'Found:', selectedStudent);
         if (!selectedStudent) {
             alert('Student not found. Please select a valid student.');
             return;
@@ -94,6 +97,7 @@ const EventDetails: React.FC = () => {
             specificDuty: newStudent.specific,
             house: selectedStudent.house || newStudent.house // Use student's actual house
         };
+        console.log('✅ Creating role:', newRole, 'Current user:', currentUser?.name);
         setEvent({ ...event, studentRoles: [...event.studentRoles, newRole] });
         setNewStudent({ name: '', role: 'Participant', specific: '', house: 'Red' });
         setIsSaved(false);
