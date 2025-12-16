@@ -286,7 +286,7 @@ const EventDetails: React.FC = () => {
                                                 {event.headTeacherName.charAt(0)}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-bold text-gray-900">{event.headTeacherName}</p>
+                                                <p className="text-sm font-bold text-gray-900" title={`Teacher Code: ${teachers.find(t => t.id === event.headTeacherId)?.teacherCode || 'N/A'}`}>{event.headTeacherName}</p>
                                                 <p className="text-xs text-gray-500">Teacher In-Charge</p>
                                             </div>
                                         </div>
@@ -301,7 +301,7 @@ const EventDetails: React.FC = () => {
                                                     {role.teacherName.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900">{role.teacherName}</p>
+                                                    <p className="text-sm font-medium text-gray-900" title={`Teacher Code: ${teachers.find(t => t.id === role.teacherId)?.teacherCode || 'N/A'}`}>{role.teacherName}</p>
                                                     <p className="text-xs text-gray-500">Staff</p>
                                                 </div>
                                             </div>
@@ -395,7 +395,7 @@ const EventDetails: React.FC = () => {
                                 <tbody className="divide-y divide-gray-100">
                                     {event.studentRoles.filter(r => r.status === 'participant').map((role, idx) => (
                                         <tr key={idx}>
-                                            <td className="px-4 py-3 font-medium text-gray-800">{role.studentName}</td>
+                                            <td className="px-4 py-3 font-medium text-gray-800" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>{role.studentName}</td>
                                             <td className="px-4 py-3 text-gray-600">
                                                 <span className={`w-2 h-2 rounded-full inline-block mr-2 ${role.house === 'Red' ? 'bg-red-500' : role.house === 'Blue' ? 'bg-blue-500' : role.house === 'Green' ? 'bg-green-500' : 'bg-yellow-500'
                                                     }`}></span>
@@ -443,7 +443,7 @@ const EventDetails: React.FC = () => {
                                     <tbody className="divide-y divide-gray-100">
                                         {event.studentRoles.filter(r => r.status === 'volunteered').map((role) => (
                                             <tr key={role.studentId} className="hover:bg-gray-50">
-                                                <td className="px-4 py-3 font-medium text-gray-900">{role.studentName}</td>
+                                                <td className="px-4 py-3 font-medium text-gray-900" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>{role.studentName}</td>
                                                 <td className="px-4 py-3">
                                                     <span className={`px-2 py-1 rounded text-xs font-medium ${role.house === 'Red' ? 'bg-red-100 text-red-700' :
                                                         role.house === 'Blue' ? 'bg-blue-100 text-blue-700' :
@@ -492,7 +492,7 @@ const EventDetails: React.FC = () => {
                                 {event.studentRoles.filter(r => r.role === 'Participant').map((role, idx) => (
                                     <div key={idx} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
                                         <div>
-                                            <p className="font-medium text-gray-900">{role.studentName} <span className="text-gray-400 text-xs">({role.house})</span></p>
+                                            <p className="font-medium text-gray-900" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>{role.studentName} <span className="text-gray-400 text-xs">({role.house})</span></p>
                                             <p className="text-xs text-gray-500">{role.specificDuty}</p>
                                         </div>
                                         <div className="flex items-center gap-2">
