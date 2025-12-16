@@ -174,6 +174,36 @@ const EventDetails: React.FC = () => {
                         <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${event.status === 'Completed' ? 'bg-gray-100 text-gray-700 border-gray-200' : 'bg-green-100 text-green-700 border-green-200'}`}>
                             {event.status}
                         </span>
+                        {/* Volunteer Application Button for Students */}
+                        {currentUser?.role === 'Student' && event.status === 'Upcoming' && !event.studentRoles.some(r => r.studentId === currentUser.id) && (
+                            <button
+                                onClick={() => {
+                                    const newRole: EventStudentRole = {
+                                        studentId: currentUser.id,
+                                        studentName: currentUser.name,
+                                        role: 'Participant',
+                                        status: 'volunteered',
+                                        appliedDate: new Date().toISOString().split('T')[0]
+                                    };
+                                    updateEvent({ ...event, studentRoles: [...event.studentRoles, newRole] });
+                                    alert('Application submitted! The event organizer will review your request.');
+                                }}
+                                className="mt-2 bg-school-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-school-700 flex items-center gap-2 ml-auto"
+                            >
+                                <UserPlus size={16} />
+                                Apply as Volunteer
+                            </button>
+                        )}
+                        {currentUser?.role === 'Student' && event.studentRoles.some(r => r.studentId === currentUser.id && r.status === 'volunteered') && (
+                            <div className="mt-2 bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 rounded-lg text-xs font-medium">
+                                ⏳ Application Pending
+                            </div>
+                        )}
+                        {currentUser?.role === 'Student' && event.studentRoles.some(r => r.studentId === currentUser.id && r.status === 'participant') && (
+                            <div className="mt-2 bg-green-50 border border-green-200 text-green-800 px-3 py-2 rounded-lg text-xs font-medium">
+                                ✓ You're Participating
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -221,13 +251,16 @@ const EventDetails: React.FC = () => {
                                     <UserPlus size={16} /> Add Teacher to Team
                                 </h3>
                                 <div className="flex gap-3">
-                                    <input
-                                        type="text"
-                                        placeholder="Search Teacher Name..."
+                                    <select
                                         className="flex-1 bg-white text-gray-900 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-school-500"
                                         value={newStaff.name}
                                         onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-                                    />
+                                    >
+                                        <option value="">-- Select Teacher --</option>
+                                        {teachers.map(t => (
+                                            <option key={t.id} value={t.name}>{t.name} ({t.teacherCode})</option>
+                                        ))}
+                                    </select>
                                     <input
                                         type="text"
                                         placeholder="Role (e.g. Scoring)"
@@ -423,16 +456,18 @@ const EventDetails: React.FC = () => {
                     {/* RESULTS TAB */}
                     {activeTab === 'results' && (
                         <div className="space-y-6">
-                            <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-lg flex items-start gap-3">
-                                <RefreshCw className="text-yellow-600 mt-1" size={20} />
-                                <div>
-                                    <h3 className="text-sm font-bold text-yellow-800">Auto-Sync Enabled</h3>
-                                    <p className="text-xs text-yellow-700 mt-1">
-                                        Saving the results below will <strong>automatically update</strong> the Student's 360° Profile Activity Log.
-                                        This ensures the AI Factor Analysis is always up to date.
-                                    </p>
+                            {isOrganizer && (
+                                <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-lg flex items-start gap-3">
+                                    <RefreshCw className="text-yellow-600 mt-1" size={20} />
+                                    <div>
+                                        <h3 className="text-sm font-bold text-yellow-800">Auto-Sync Enabled</h3>
+                                        <p className="text-xs text-yellow-700 mt-1">
+                                            Saving the results below will <strong>automatically update</strong> the Student's 360° Profile Activity Log.
+                                            This ensures the AI Factor Analysis is always up to date.
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <div className="space-y-2">
                                 {event.studentRoles.filter(r => r.role === 'Participant').map((role, idx) => (
