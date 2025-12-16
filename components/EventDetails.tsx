@@ -20,9 +20,9 @@ const EventDetails: React.FC = () => {
 
     useEffect(() => {
         const found = events.find(e => e.id === id);
-        // Only update if event is different or not set, to avoid overwriting local unsaved changes
-        if (found && JSON.stringify(found) !== JSON.stringify(event)) {
+        if (found) {
             setEvent(found);
+            setIsSaved(true); // Mark as saved when loading from context
         }
     }, [id, events]);
 
