@@ -105,7 +105,7 @@ const TeacherProfile: React.FC = () => {
                         className={`flex - 1 py - 4 text - sm font - bold flex items - center justify - center gap - 2 transition - colors ${activeTab === 'duties' ? 'bg-school-50 text-school-700 border-b-2 border-school-600' : 'text-gray-500 hover:bg-gray-50'
                             } `}
                     >
-                        <Trophy size={16} /> Co-Curricular Duties
+                        <Trophy size={16} /> My Events & Duties
                     </button>
                 </div>
 
