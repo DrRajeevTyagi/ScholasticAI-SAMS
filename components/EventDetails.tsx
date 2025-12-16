@@ -20,7 +20,10 @@ const EventDetails: React.FC = () => {
 
     useEffect(() => {
         const found = events.find(e => e.id === id);
-        if (found) setEvent(found);
+        // Only update if event is different or not set, to avoid overwriting local unsaved changes
+        if (found && JSON.stringify(found) !== JSON.stringify(event)) {
+            setEvent(found);
+        }
     }, [id, events]);
 
     // Form states for adding roles
