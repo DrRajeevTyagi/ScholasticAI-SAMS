@@ -470,7 +470,7 @@ const EventDetails: React.FC = () => {
                                                     {role.studentName}
                                                     {role.selectedByHouse && (
                                                         <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200 font-semibold" title={`Selected by ${houseSelectedTeacher?.name || 'House Incharge'} on ${role.houseSelectedDate}`}>
-                                                            House Selected
+                                                            House Team
                                                         </span>
                                                     )}
                                                 </td>
