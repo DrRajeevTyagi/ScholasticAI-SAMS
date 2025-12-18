@@ -37,6 +37,13 @@ const EventDetails: React.FC = () => {
         event.headTeacherId === currentUser?.id ||
         event.staffRoles.some(r => r.teacherId === currentUser?.id);
 
+    // NEW: House Incharge Detection
+    const currentTeacher = currentUser?.role === 'Teacher'
+        ? teachers.find(t => t.id === currentUser.id)
+        : null;
+    const isHouseIncharge = currentTeacher?.isHouseMaster || false;
+    const currentHouse = currentTeacher?.house;
+
     const handleSaveToContext = () => {
         if (event) {
             console.log('💾 SAVING EVENT - Students:', event.studentRoles.length, 'Staff:', event.staffRoles.length);
@@ -108,6 +115,31 @@ const EventDetails: React.FC = () => {
         const updatedRoles = event.studentRoles.map(role =>
             role.studentId === studentId ? { ...role, status: 'participant' as const } : role
         );
+        setEvent({ ...event, studentRoles: updatedRoles });
+        setIsSaved(false);
+    };
+
+    // NEW: House incharge select student (directly to participant)
+    const handleHouseSelect = (studentId: string) => {
+        const updatedRoles = event.studentRoles.map(role =>
+            role.studentId === studentId
+                ? {
+                    ...role,
+                    status: 'participant' as const,
+                    selectedByHouse: true,
+                    houseSelectedBy: currentUser?.id,
+                    houseSelectedDate: new Date().toISOString().split('T')[0]
+                }
+                : role
+        );
+        setEvent({ ...event, studentRoles: updatedRoles });
+        setIsSaved(false);
+    };
+
+    // NEW: House incharge regret/reject student
+    const handleHouseRegret = (studentId: string) => {
+        // Remove student from event completely
+        const updatedRoles = event.studentRoles.filter(role => role.studentId !== studentId);
         setEvent({ ...event, studentRoles: updatedRoles });
         setIsSaved(false);
     };
@@ -428,23 +460,35 @@ const EventDetails: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {event.studentRoles.filter(r => r.status === 'participant').map((role, idx) => (
-                                        <tr key={idx}>
-                                            <td className="px-4 py-3 font-medium text-gray-800" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>{role.studentName}</td>
-                                            <td className="px-4 py-3 text-gray-600">
-                                                <span className={`w-2 h-2 rounded-full inline-block mr-2 ${role.house === 'Red' ? 'bg-red-500' : role.house === 'Blue' ? 'bg-blue-500' : role.house === 'Green' ? 'bg-green-500' : 'bg-yellow-500'
-                                                    }`}></span>
-                                                {role.house}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className={`text-xs px-2 py-1 rounded-full border ${role.role === 'Participant' ? 'bg-blue-50 border-blue-100 text-blue-700' : 'bg-orange-50 border-orange-100 text-orange-700'}`}>
-                                                    {role.role}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-gray-600">{role.specificDuty || '-'}</td>
-                                        </tr>
-                                    ))}
-                                    {event.studentRoles.length === 0 && (
+                                    {event.studentRoles.filter(r => r.status === 'participant').map((role, idx) => {
+                                        const houseSelectedTeacher = role.houseSelectedBy
+                                            ? teachers.find(t => t.id === role.houseSelectedBy)
+                                            : null;
+                                        return (
+                                            <tr key={idx}>
+                                                <td className="px-4 py-3 font-medium text-gray-800" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>
+                                                    {role.studentName}
+                                                    {role.selectedByHouse && (
+                                                        <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200 font-semibold" title={`Selected by ${houseSelectedTeacher?.name || 'House Incharge'} on ${role.houseSelectedDate}`}>
+                                                            House Selected
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3 text-gray-600">
+                                                    <span className={`w-2 h-2 rounded-full inline-block mr-2 ${role.house === 'Red' ? 'bg-red-500' : role.house === 'Blue' ? 'bg-blue-500' : role.house === 'Green' ? 'bg-green-500' : 'bg-yellow-500'
+                                                        }`}></span>
+                                                    {role.house}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <span className={`text-xs px-2 py-1 rounded-full border ${role.role === 'Participant' ? 'bg-blue-50 border-blue-100 text-blue-700' : 'bg-orange-50 border-orange-100 text-orange-700'}`}>
+                                                        {role.role}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-gray-600">{role.specificDuty || '-'}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                    {event.studentRoles.filter(r => r.status === 'participant').length === 0 && (
                                         <tr><td colSpan={4} className="text-center py-4 text-gray-400 italic">No students added yet.</td></tr>
                                     )}
                                 </tbody>
@@ -457,53 +501,77 @@ const EventDetails: React.FC = () => {
                         <div className="space-y-4">
                             <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                                 <h3 className="text-sm font-bold text-yellow-800 mb-2">Volunteer Applications</h3>
-                                <p className="text-xs text-yellow-700">Students who have applied to participate. Select volunteers to confirm their participation.</p>
+                                <p className="text-xs text-yellow-700">
+                                    {isHouseIncharge
+                                        ? `Students from ${currentHouse} House who have volunteered. Select students to confirm their participation.`
+                                        : 'Students who have applied to participate. Select volunteers to confirm their participation.'
+                                    }
+                                </p>
                             </div>
 
-                            {event.studentRoles.filter(r => r.status === 'volunteered').length === 0 ? (
-                                <div className="text-center py-8 text-gray-400">
-                                    <Users size={48} className="mx-auto mb-2 opacity-50" />
-                                    <p>No volunteer applications yet</p>
-                                </div>
-                            ) : (
-                                <table className="w-full text-left text-sm">
-                                    <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
-                                        <tr>
-                                            <th className="px-4 py-3">Student</th>
-                                            <th className="px-4 py-3">House</th>
-                                            <th className="px-4 py-3">Applied Date</th>
-                                            <th className="px-4 py-3">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                        {event.studentRoles.filter(r => r.status === 'volunteered').map((role) => (
-                                            <tr key={role.studentId} className="hover:bg-gray-50">
-                                                <td className="px-4 py-3 font-medium text-gray-900" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>{role.studentName}</td>
-                                                <td className="px-4 py-3">
-                                                    <span className={`px-2 py-1 rounded text-xs font-medium ${role.house === 'Red' ? 'bg-red-100 text-red-700' :
-                                                        role.house === 'Blue' ? 'bg-blue-100 text-blue-700' :
-                                                            role.house === 'Green' ? 'bg-green-100 text-green-700' :
-                                                                'bg-yellow-100 text-yellow-700'
-                                                        }`}>
-                                                        {role.house}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4 py-3 text-gray-600">{role.appliedDate || 'N/A'}</td>
-                                                <td className="px-4 py-3">
-                                                    {isOrganizer && (
-                                                        <button
-                                                            onClick={() => promoteVolunteer(role.studentId)}
-                                                            className="bg-green-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-green-700"
-                                                        >
-                                                            Select as Participant
-                                                        </button>
-                                                    )}
-                                                </td>
+                            {/* Filter volunteers based on role */}
+                            {(() => {
+                                const volunteersToShow = isHouseIncharge
+                                    ? event.studentRoles.filter(r => r.status === 'volunteered' && r.house === currentHouse)
+                                    : event.studentRoles.filter(r => r.status === 'volunteered');
+
+                                return volunteersToShow.length === 0 ? (
+                                    <div className="text-center py-8 text-gray-400">
+                                        <Users size={48} className="mx-auto mb-2 opacity-50" />
+                                        <p>{isHouseIncharge ? `No volunteers from ${currentHouse} House yet` : 'No volunteer applications yet'}</p>
+                                    </div>
+                                ) : (
+                                    <table className="w-full text-left text-sm">
+                                        <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
+                                            <tr>
+                                                <th className="px-4 py-3">Student</th>
+                                                <th className="px-4 py-3">House</th>
+                                                <th className="px-4 py-3">Applied Date</th>
+                                                <th className="px-4 py-3">Action</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {volunteersToShow.map((role) => (
+                                                <tr key={role.studentId} className="hover:bg-gray-50">
+                                                    <td className="px-4 py-3 font-medium text-gray-900" title={`Admission No: ${students.find(s => s.id === role.studentId)?.admissionNo || 'N/A'}`}>{role.studentName}</td>
+                                                    <td className="px-4 py-3">
+                                                        <span className={`px-2 py-1 rounded text-xs font-medium ${role.house === 'Red' ? 'bg-red-100 text-red-700' :
+                                                            role.house === 'Blue' ? 'bg-blue-100 text-blue-700' :
+                                                                role.house === 'Green' ? 'bg-green-100 text-green-700' :
+                                                                    'bg-yellow-100 text-yellow-700'
+                                                            }`}>
+                                                            {role.house}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-gray-600">{role.appliedDate || 'N/A'}</td>
+                                                    <td className="px-4 py-3">
+                                                        <div className="flex gap-2">
+                                                            {(isOrganizer || isHouseIncharge) && (
+                                                                <>
+                                                                    <button
+                                                                        onClick={() => isHouseIncharge ? handleHouseSelect(role.studentId) : promoteVolunteer(role.studentId)}
+                                                                        className="bg-green-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-green-700"
+                                                                    >
+                                                                        Select
+                                                                    </button>
+                                                                    {isHouseIncharge && (
+                                                                        <button
+                                                                            onClick={() => handleHouseRegret(role.studentId)}
+                                                                            className="bg-red-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-red-700"
+                                                                        >
+                                                                            Regret
+                                                                        </button>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                );
+                            })()}
                         </div>
                     )}
 

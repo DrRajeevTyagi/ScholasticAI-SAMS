@@ -179,6 +179,9 @@ export interface EventStudentRole {
   house?: string;
   achievement?: string; // e.g., "1st Position"
   appliedDate?: string; // NEW: When student volunteered
+  selectedByHouse?: boolean; // NEW: Flag indicating house incharge selected this student
+  houseSelectedBy?: string; // NEW: Teacher ID of house incharge who selected
+  houseSelectedDate?: string; // NEW: Date of house selection
 }
 
 export interface EventNote {

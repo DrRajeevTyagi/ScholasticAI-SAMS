@@ -72,6 +72,13 @@ const Events: React.FC = () => {
     const isAdmin = currentUser?.role === 'Admin';
     const studentProfile = isStudent ? students.find(s => s.id === currentUser.id) : null;
 
+    // House Incharge Detection
+    const currentTeacher = currentUser?.role === 'Teacher'
+        ? teachers.find(t => t.id === currentUser.id)
+        : null;
+    const isHouseIncharge = currentTeacher?.isHouseMaster || false;
+    const currentHouse = currentTeacher?.house;
+
     // --- HOUSE POINT LOGIC ---
     const houseStats = useMemo(() => {
         // Initial State
@@ -267,7 +274,13 @@ const Events: React.FC = () => {
                     to={`/events/${event.id}`}
                     className="p-4 bg-gray-50 border-t border-gray-100 text-school-600 text-sm font-semibold flex items-center justify-between hover:bg-school-50 transition-colors"
                 >
-                    {isAdmin ? 'Manage Event' : 'View Details'} <ChevronRight size={16} />
+                    {/* Dynamic button text based on user role */}
+                    {isHouseIncharge && event.status === 'Upcoming'
+                        ? 'Select Your Team'
+                        : (isAdmin || event.headTeacherId === currentUser?.id || event.staffRoles.some(r => r.teacherId === currentUser?.id))
+                            ? 'Manage Event'
+                            : 'View Details'
+                    } <ChevronRight size={16} />
                 </Link>
             </div>
         );
@@ -420,13 +433,48 @@ const Events: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                /* 2. ADMIN / TEACHER VIEW (ALL EVENTS) */
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-                    {events.length === 0 ? (
-                        <div className="col-span-3 text-center py-10 text-gray-400 italic">No events declared yet.</div>
-                    ) : (
-                        events.map(renderEventCard)
-                    )}
+                /* 2. ADMIN / TEACHER VIEW */
+                <div className="space-y-8">
+                    {/* Upcoming Events Section */}
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <Sparkles size={20} className="text-green-500" /> Upcoming Events
+                        </h3>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {events.filter(e => e.status !== 'Completed').length > 0 ? (
+                                events.filter(e => e.status !== 'Completed').map(renderEventCard)
+                            ) : (
+                                <div className="col-span-3 text-center py-8 bg-white rounded-xl border border-dashed border-gray-200 text-gray-400">
+                                    <p>No upcoming events.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Separator */}
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div className="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div className="relative flex justify-center">
+                            <span className="bg-gray-50 px-2 text-gray-500 text-sm font-medium flex items-center gap-2">
+                                <History size={16} /> Past Events
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Past Events Section */}
+                    <div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {events.filter(e => e.status === 'Completed').length > 0 ? (
+                                events.filter(e => e.status === 'Completed').map(renderEventCard)
+                            ) : (
+                                <div className="col-span-3 text-center py-8 bg-gray-100 rounded-xl border border-transparent text-gray-400">
+                                    <p>No past events yet.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
 
