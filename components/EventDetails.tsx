@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, MapPin, Users, UserPlus, Save, Trophy, Image as ImageIcon, CheckCircle, RefreshCw, Building2, Globe } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, UserPlus, Save, Trophy, Image as ImageIcon, CheckCircle, RefreshCw, Building2, Globe, X } from 'lucide-react';
 import { SchoolEvent, EventStaffRole, EventStudentRole } from '../types';
 import { useSchool } from '../context/SchoolContext';
+import EventGallery from './EventGallery';
 
 const EventDetails: React.FC = () => {
     const { id } = useParams();
@@ -29,6 +30,7 @@ const EventDetails: React.FC = () => {
     // Form states for adding roles
     const [newStaff, setNewStaff] = useState({ name: '', role: '' });
     const [newStudent, setNewStudent] = useState({ name: '', role: 'Participant', specific: '', house: 'Red' });
+    const [isDragging, setIsDragging] = useState(false);
 
     if (!event) return <div className="p-8">Event not found</div>;
 
@@ -717,15 +719,13 @@ const EventDetails: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-gray-100">
-                                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <ImageIcon size={18} /> Event Gallery
-                                </h3>
-                                <div className="h-32 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-50 transition-colors">
-                                    <ImageIcon size={24} className="mb-2" />
-                                    <span className="text-sm font-medium">Drag and drop photos here</span>
-                                </div>
-                            </div>
+                            <EventGallery
+                                event={event}
+                                onImageChange={(images) => {
+                                    setEvent({ ...event, galleryImages: images });
+                                    setIsSaved(false);
+                                }}
+                            />
                         </div>
                     )}
                 </div>
