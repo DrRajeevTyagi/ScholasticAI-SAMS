@@ -122,9 +122,14 @@ const EventGallery: React.FC<EventGalleryProps> = ({ event, onImageChange }) => 
                             </div>
                             <div>
                                 <span className="font-semibold">Staff:</span>{' '}
-                                {event.staffRoles?.length > 0
-                                    ? event.staffRoles.map(r => r.teacherName).join(', ')
-                                    : 'None'}
+                                {(() => {
+                                    const staffNames = [];
+                                    if (event.headTeacherName) staffNames.push(event.headTeacherName + ' (I/C)');
+                                    if (event.staffRoles?.length > 0) {
+                                        staffNames.push(...event.staffRoles.map(r => r.teacherName));
+                                    }
+                                    return staffNames.length > 0 ? staffNames.join(', ') : 'None';
+                                })()}
                             </div>
                             <div>
                                 <span className="font-semibold">Students:</span>{' '}
