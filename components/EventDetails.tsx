@@ -512,7 +512,12 @@ const EventDetails: React.FC = () => {
                             {/* Filter volunteers based on role */}
                             {(() => {
                                 const volunteersToShow = isHouseIncharge
-                                    ? event.studentRoles.filter(r => r.status === 'volunteered' && r.house === currentHouse)
+                                    ? event.studentRoles.filter(r => {
+                                        if (r.status !== 'volunteered') return false;
+                                        // Look up student's current house
+                                        const student = students.find(s => s.id === r.studentId);
+                                        return student?.house === currentHouse;
+                                    })
                                     : event.studentRoles.filter(r => r.status === 'volunteered');
 
                                 return volunteersToShow.length === 0 ? (
