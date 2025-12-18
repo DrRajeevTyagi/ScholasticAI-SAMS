@@ -100,7 +100,7 @@ const EventGallery: React.FC<EventGalleryProps> = ({ event, onImageChange }) => 
                     {/* Image */}
                     <div className="relative">
                         <img
-                            src={event.galleryImages[0]}
+                            src={event.galleryImages?.[0] || ''}
                             alt="Event"
                             className="w-full max-h-96 object-cover rounded-lg border border-gray-200"
                         />
