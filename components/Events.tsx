@@ -110,6 +110,7 @@ const Events: React.FC = () => {
                 if (ach.includes('Winner') || ach.includes('1st')) points = 10;
                 else if (ach.includes('Runner') || ach.includes('2nd')) points = 7;
                 else if (ach.includes('Third') || ach.includes('3rd')) points = 5;
+                else if (ach.includes('Consolation')) points = 3;
                 else if (role.role === 'Participant') points = 1;
 
                 if (event.category === 'Sports') {
@@ -383,6 +384,8 @@ const Events: React.FC = () => {
                     <span>1st Place: 10 pts</span>
                     <span>2nd Place: 7 pts</span>
                     <span>3rd Place: 5 pts</span>
+                    <span>Consolation: 3 pts</span>
+                    <span>Participant: 1 pt</span>
                 </div>
             </div>
 
